@@ -272,7 +272,7 @@
 
             await subscribeChar(service, tempCharUUID, handleTemp, v => { tempCharFound = v; });
             await subscribeChar(service, humCharUUID, handleHum, v => { humCharFound = v; });
-            await subscribeChar(service, Pm25CharUUID, handlePress, v => { Pm25CharFound = v; });
+            await subscribeChar(service, Pm25CharUUID, handlePm25, v => { Pm25CharFound = v; });
 
         } catch (err) {
             console.error('Connection error:', err);
