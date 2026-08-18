@@ -97,10 +97,10 @@
   
     const tempValueEl = document.getElementById('tempValue');
     const humValueEl = document.getElementById('humValue');
-    const pm25ValueEl = document.getElementById('Pm25Value');
+    const Pm25ValueEl = document.getElementById('Pm25Value');
     const tempTimestamp = document.getElementById('tempTimestamp');
     const humTimestamp = document.getElementById('humTimestamp');
-    const pm25Timestamp = document.getElementById('Pm25Timestamp');
+    const Pm25Timestamp = document.getElementById('Pm25Timestamp');
     const tempUnitLabel = document.getElementById('tempUnitLabel');
 
     // BLE UUIDs
@@ -108,13 +108,13 @@
     var bleService    = '0000181a-0000-1000-8000-00805f9b34fb';
     var tempCharUUID  = '00002a6e-0000-1000-8000-00805f9b34fb';
     var humCharUUID   = '00002a6f-0000-1000-8000-00805f9b34fb';
-    var pm25CharUUID = '00002a6d-0000-1000-8000-00805f9b34fb';
+    var Pm25CharUUID = '00002a6d-0000-1000-8000-00805f9b34fb';
 
     // BLE state
     var bleServer;
     var tempCharFound;
     var humCharFound;
-    var pm25CharFound;
+    var Pm25CharFound;
     var userDisconnected = false;
 
     // Sensor state
@@ -123,7 +123,7 @@
     const MAX_POINTS = 60;
     var tempData = { labels: [], valuesC: [], valuesF: [] };
     var humData = { labels: [], values: [] };
-    var pm25Data = { labels: [], values: [] };
+    var Pm25Data = { labels: [], values: [] };
 
     // Charts
     function drawChart(canvasId, color, yLabel) {
@@ -165,7 +165,7 @@
 
     var tempChart = drawChart('tempChart', '#e07b3a', 'Temperature (°C)');
     var humChart = drawChart('humChart', '#3a90c4', 'Humidity (%)');
-    var pm25Chart = drawChart('Pm25Chart', '#7c5cbf', 'PM25 (ug/m3)');
+    var Pm25Chart = drawChart('Pm25Chart', '#7c5cbf', 'PM25 (ug/m3)');
 
     // Temperature unit toggle
     function setTempUnit(unit) {
@@ -272,7 +272,7 @@
 
             await subscribeChar(service, tempCharUUID, handleTemp, v => { tempCharFound = v; });
             await subscribeChar(service, humCharUUID, handleHum, v => { humCharFound = v; });
-            await subscribeChar(service, pm25CharUUID, handlePm25, v => { Pm25CharFound = v; });
+            await subscribeChar(service, Pm25CharUUID, handlePm25, v => { Pm25CharFound = v; });
 
         } catch (err) {
             console.error('Connection error:', err);
