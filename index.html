@@ -50,9 +50,9 @@
         </div>
         <div class="sensor-card press">
             <span class="sensor-icon">&#8595;</span>
-            <div class="sensor-label">Pressure</div>
+            <div class="sensor-label">PM2.5</div>
             <div class="sensor-value">
-                <span id="pressValue">--</span><span class="sensor-unit">&nbsp;hPa</span>
+                <span id="Pm25Value">--</span><span class="sensor-unit">&nbsp;ug/m3</span>
             </div>
             <div class="sensor-timestamp" id="pressTimestamp">No reading</div>
         </div>
@@ -77,16 +77,16 @@
         </div>
         <div class="chart-card">
             <div class="chart-card-header">
-                <h2>&#8595;&nbsp; Pressure</h2>
+                <h2>&#8595;&nbsp; PM2.5</h2>
             </div>
             <div class="chart-wrapper">
-                <canvas id="pressChart" role="img"></canvas>
+                <canvas id="PM2.5Chart" role="img"></canvas>
             </div>
         </div>
     </div>
 </div>
 <div class="footer">
-    <p><a href="https://randomnerdtutorials.com/esp32-web-ble-sensor-visualization/" target="_blank">Created by RandomNerdTutorials.com - Read the Complete Project »</a></p>
+    <p><a href= »</a></p>
 </div>
 <script>
     // DOM Elements
@@ -97,10 +97,10 @@
   
     const tempValueEl = document.getElementById('tempValue');
     const humValueEl = document.getElementById('humValue');
-    const pressValueEl = document.getElementById('pressValue');
+    const Pm25ValueEl = document.getElementById('Pm25Value');
     const tempTimestamp = document.getElementById('tempTimestamp');
     const humTimestamp = document.getElementById('humTimestamp');
-    const pressTimestamp = document.getElementById('pressTimestamp');
+    const Pm25Timestamp = document.getElementById('Pm25Timestamp');
     const tempUnitLabel = document.getElementById('tempUnitLabel');
 
     // BLE UUIDs
@@ -108,13 +108,13 @@
     var bleService    = '0000181a-0000-1000-8000-00805f9b34fb';
     var tempCharUUID  = '00002a6e-0000-1000-8000-00805f9b34fb';
     var humCharUUID   = '00002a6f-0000-1000-8000-00805f9b34fb';
-    var pressCharUUID = '00002a6d-0000-1000-8000-00805f9b34fb';
+    var Pm25CharUUID = '00002a6d-0000-1000-8000-00805f9b34fb';
 
     // BLE state
     var bleServer;
     var tempCharFound;
     var humCharFound;
-    var pressCharFound;
+    var Pm25CharFound;
     var userDisconnected = false;
 
     // Sensor state
@@ -123,7 +123,7 @@
     const MAX_POINTS = 60;
     var tempData = { labels: [], valuesC: [], valuesF: [] };
     var humData = { labels: [], values: [] };
-    var pressData = { labels: [], values: [] };
+    var Pm25Data = { labels: [], values: [] };
 
     // Charts
     function drawChart(canvasId, color, yLabel) {
@@ -165,7 +165,7 @@
 
     var tempChart = drawChart('tempChart', '#e07b3a', 'Temperature (°C)');
     var humChart = drawChart('humChart', '#3a90c4', 'Humidity (%)');
-    var pressChart = drawChart('pressChart', '#7c5cbf', 'Pressure (hPa)');
+    var Pm25Chart = drawChart('Pm25Chart', '#7c5cbf', 'PM25 (ug/m3)');
 
     // Temperature unit toggle
     function setTempUnit(unit) {
@@ -272,7 +272,7 @@
 
             await subscribeChar(service, tempCharUUID, handleTemp, v => { tempCharFound = v; });
             await subscribeChar(service, humCharUUID, handleHum, v => { humCharFound = v; });
-            await subscribeChar(service, pressCharUUID, handlePress, v => { pressCharFound = v; });
+            await subscribeChar(service, Pm25CharUUID, handlePress, v => { Pm25CharFound = v; });
 
         } catch (err) {
             console.error('Connection error:', err);
@@ -326,13 +326,13 @@
         pushPoint(humData, humChart, ts, parseFloat(val.toFixed(1)));
     }
 
-    function handlePress(event) {
+    function handlePm25(event) {
         var val = parseFloat(new TextDecoder().decode(event.target.value));
         if (isNaN(val)) return;
         pressValueEl.textContent = val.toFixed(1);
         var ts = getTime();
-        pressTimestamp.textContent = 'Last reading: ' + ts;
-        pushPoint(pressData, pressChart, ts, parseFloat(val.toFixed(1)));
+        Pm25Timestamp.textContent = 'Last reading: ' + ts;
+        pushPoint(Pm25Data, Pm25Chart, ts, parseFloat(val.toFixed(1)));
     }
 
     // Disconnect handlers
@@ -351,7 +351,7 @@
         const stops = [];
         if (tempCharFound) stops.push(tempCharFound.stopNotifications().catch(() => {}));
         if (humCharFound) stops.push(humCharFound.stopNotifications().catch(() => {}));
-        if (pressCharFound) stops.push(pressCharFound.stopNotifications().catch(() => {}));
+        if (Pm25CharFound) stops.push(Pm25CharFound.stopNotifications().catch(() => {}));
         
         Promise.all(stops)
             .then(() => bleServer.disconnect())
