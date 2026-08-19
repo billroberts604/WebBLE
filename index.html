@@ -112,6 +112,7 @@
     const Pm25Timestamp = document.getElementById('Pm25Timestamp');
     const Pm10Timestamp = document.getElementById('Pm10Timestamp');
     const ambTempUnitLabel = document.getElementById('ambTempUnitLabel');
+    const objTempUnitLabel = document.getElementById('objTempUnitLabel');
 
     // BLE UUIDs
     var deviceName    = 'ESP32';
@@ -134,7 +135,7 @@
     var lastTempC = null;
     const MAX_POINTS = 60;
     var ambTempData = { labels: [], valuesC: [], valuesF: [] };
-    var objTempData = { labels: [], values: [] };
+    var objTempData = { labels: [], valuesC: [], valuesF: [] };
     var Pm25Data = { labels: [], values: [] };
     var Pm10Data = { labels: [], values: [] };
   
