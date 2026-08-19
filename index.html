@@ -217,7 +217,7 @@
             : cToF(parseFloat(lastTempC));
     }
 
-    function refreshTempChart() {
+    function refreshAmbTempChart() {
         ambTempChart.data.labels = ambTempData.labels;
         ambTempChart.data.datasets[0].data = currentUnit === 'C' ? ambTempData.valuesC : ambTempData.valuesF;
         ambTempChart.data.datasets[0].label = currentUnit === 'C' ? 'Temperature (°C)' : 'Temperature (°F)';
@@ -225,7 +225,16 @@
         ambTempChart.update();
     }
 
-    function pushPoint(dataObj, chart, label, value, extraValue = null) {
+  
+    function refreshObjTempChart() {
+        objTempChart.data.labels = objTempData.labels;
+        objTempChart.data.datasets[0].data = currentUnit === 'C' ? objTempData.valuesC : objTempData.valuesF;
+        objTempChart.data.datasets[0].label = currentUnit === 'C' ? 'Temperature (°C)' : 'Temperature (°F)';
+        objTempChart.options.scales.y.title.text = currentUnit === 'C' ? 'Temperature (°C)' : 'Temperature (°F)';
+        objTempChart.update();
+    }
+  
+    function pushTempPoint(dataObj, chart, label, value, extraValue = null) {
         dataObj.labels.push(label);
         if (extraValue !== null) {
             dataObj.valuesC.push(value);
@@ -251,6 +260,18 @@
         chart.update('none');
     }
 
+  function pushPmPoint(dataObj, chart, label, value) {
+        dataObj.labels.push(label);
+        dataObj.values.push(value);
+        if (dataObj.labels.length > MAX_POINTS) {
+            dataObj.labels.shift();
+            dataObj.values.shift();
+        }
+        chart.data.labels = dataObj.labels;
+        chart.data.datasets[0].data = dataObj.values;
+        chart.update('none');
+    }
+  
     // BLE UI helpers
     function showConnectButton() {
         connectButton.classList.remove('hidden');
@@ -345,7 +366,7 @@
         ambTempTimestamp.textContent = 'Last reading: ' + ts;
         const valC = parseFloat(val.toFixed(1));
         const valF = parseFloat(cToF(val));
-        pushPoint(ambTempData, ambTempChart, ts, valC, valF);
+        pushTempPoint(ambTempData, ambTempChart, ts, valC, valF);
     }
 
     function handleobjTemp(event) {
@@ -357,7 +378,7 @@
         objTempTimestamp.textContent = 'Last reading: ' + ts;
         const valC = parseFloat(val.toFixed(1));
         const valF = parseFloat(cToF(val));
-        pushPoint(objTempData, objTempChart, ts, valC, valF);
+        pushTempPoint(objTempData, objTempChart, ts, valC, valF);
     }
 
     function handlePm25(event) {
@@ -366,7 +387,7 @@
         Pm25ValueEl.textContent = val.toFixed(1);
         var ts = getTime();
         Pm25Timestamp.textContent = 'Last reading: ' + ts;
-        pushPoint(Pm25Data, Pm25Chart, ts, parseFloat(val.toFixed(1)));
+        pushPmPoint(Pm25Data, Pm25Chart, ts, parseFloat(val.toFixed(1)));
     }
 
     function handlePm10(event) {
@@ -375,7 +396,7 @@
         Pm10ValueEl.textContent = val.toFixed(1);
         var ts = getTime();
         Pm10Timestamp.textContent = 'Last reading: ' + ts;
-        // pushPoint(Pm10Data, Pm10Chart, ts, parseFloat(val.toFixed(1)));
+        // pushPmPoint(Pm10Data, Pm10Chart, ts, parseFloat(val.toFixed(1)));
     }
 
     // Disconnect handlers
