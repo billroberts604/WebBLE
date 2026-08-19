@@ -14,7 +14,7 @@
 <body>
 <!-- Navigation -->
 <div class="topnav">
-    <h1>ESP32 Web BLE - SENSOR - 22:03</h1>
+    <h1>ESP32 Web BLE - SENSOR - 10:43</h1>
 </div>
 <div class="content">
     <!-- Connect/Disconnect buttons -->
@@ -40,6 +40,7 @@
                 <button class="unit-btn" id="btnF" onclick="setTempUnit('F')">&deg;F</button>
             </div>
         </div>
+      
         <div class="sensor-card objTemp">
             <span class="sensor-icon">&#x1F321;</span>
             <div class="sensor-label">Obj Temp</div>
@@ -48,6 +49,7 @@
             </div>
             <div class="sensor-timestamp" id="objTempTimestamp">No reading</div>
         </div>
+      
         <div class="sensor-card PM2.5">
             <span class="sensor-icon">&#8595;</span>
             <div class="sensor-label">PM2.5</div>
@@ -56,7 +58,8 @@
             </div>
             <div class="sensor-timestamp" id="Pm25Timestamp">No reading</div>
         </div>
-            <div class="sensor-card PM10">
+      
+        <div class="sensor-card PM10">
             <span class="sensor-icon">&#8595;</span>
             <div class="sensor-label">PM10</div>
             <div class="sensor-value">
@@ -75,6 +78,7 @@
                 <canvas id="ambTempChart" role="img"></canvas>
             </div>
         </div>
+      
         <div class="chart-card">
             <div class="chart-card-header">
                 <h2>&#x1F321;&nbsp; Obj Temperature</h2>
@@ -83,6 +87,7 @@
                 <canvas id="objTempChart" role="img"></canvas>
             </div>
         </div>
+      
         <div class="chart-card">
             <div class="chart-card-header">
                 <h2>&#8595;&nbsp; PM2.5</h2>
@@ -91,11 +96,14 @@
                 <canvas id="PM25Chart" role="img"></canvas>
             </div>
         </div>
+      
     </div>
 </div>
+  
 <div class="footer">
     <p><a href= »</a></p>
 </div>
+  
 <script>
     // DOM Elements
     const connectButton = document.getElementById('connectBleButton');
@@ -119,8 +127,8 @@
     var bleService    = '0000181a-0000-1000-8000-00805f9b34fb';
     var ambTempCharUUID  = '00002a6e-0000-1000-8000-00805f9b34fb';
     var objTempCharUUID   = '00002a6e-0000-1000-8000-00805f9b34fb';
-    var Pm25CharUUID = '00002a6b-0000-1000-8000-00805f9b34fb';
-    var Pm10CharUUID = '00002a6b-0000-1000-8000-00805f9b34fb';
+    var Pm25CharUUID = '00002a6e-0000-1000-8000-00805f9b34fb';
+    var Pm10CharUUID = '00002a6e-0000-1000-8000-00805f9b34fb';
 
     // BLE state
     var bleServer;
@@ -195,9 +203,16 @@
         return (c * 9 / 5 + 32).toFixed(1);
     }
 
-    function refreshTempDisplay() {
+    function refreshAmbTempDisplay() {
         if (lastTempC === null) return;
         ambTempValueEl.textContent = currentUnit === 'C'
+            ? parseFloat(lastTempC).toFixed(1)
+            : cToF(parseFloat(lastTempC));
+    }
+
+    function refreshObjTempDisplay() {
+        if (lastTempC === null) return;
+        objTempValueEl.textContent = currentUnit === 'C'
             ? parseFloat(lastTempC).toFixed(1)
             : cToF(parseFloat(lastTempC));
     }
@@ -325,7 +340,7 @@
         var val = parseFloat(new TextDecoder().decode(event.target.value));
         if (isNaN(val)) return;
         lastTempC = val;
-        refreshTempDisplay();
+        refreshAmbTempDisplay();
         var ts = getTime();
         ambTempTimestamp.textContent = 'Last reading: ' + ts;
         const valC = parseFloat(val.toFixed(1));
@@ -337,7 +352,7 @@
         var val = parseFloat(new TextDecoder().decode(event.target.value));
         if (isNaN(val)) return;
         lastTempC = val;
-        refreshTempDisplay();
+        refreshObjTempDisplay();
         var ts = getTime();
         objTempTimestamp.textContent = 'Last reading: ' + ts;
         const valC = parseFloat(val.toFixed(1));
