@@ -28,25 +28,25 @@
     </div>
     <!-- Sensor Reading Cards -->
     <div class="sensor-grid">
-        <div class="sensor-card temp">
+        <div class="sensor-card ambTemp">
             <span class="sensor-icon">&#x1F321;</span>
-            <div class="sensor-label">Temperature</div>
+            <div class="sensor-label">Amb Temp</div>
             <div class="sensor-value">
-                <span id="tempValue">--</span><span class="sensor-unit" id="tempUnitLabel">&nbsp;&deg;C</span>
+                <span id="ambTempValue">--</span><span class="sensor-unit" id="tempUnitLabel">&nbsp;&deg;C</span>
             </div>
-            <div class="sensor-timestamp" id="tempTimestamp">No reading</div>
+            <div class="sensor-timestamp" id="ambTempTimestamp">No reading</div>
             <div class="unit-toggle">
                 <button class="unit-btn active" id="btnC" onclick="setTempUnit('C')">&deg;C</button>
                 <button class="unit-btn" id="btnF" onclick="setTempUnit('F')">&deg;F</button>
             </div>
         </div>
-        <div class="sensor-card hum">
-            <span class="sensor-icon">&#x1F4A7;</span>
-            <div class="sensor-label">Humidity</div>
+        <div class="sensor-card objTemp">
+            <span class="sensor-icon">&#x1F321;</span>
+            <div class="sensor-label">Obj Temp</div>
             <div class="sensor-value">
-                <span id="humValue">--</span><span class="sensor-unit">&nbsp;%</span>
+                <span id="objTempValue">--</span><span class="sensor-unit" id="tempUnitLabel">&nbsp;&deg;C</span>
             </div>
-            <div class="sensor-timestamp" id="humTimestamp">No reading</div>
+            <div class="sensor-timestamp" id="objTempTimestamp">No reading</div>
         </div>
         <div class="sensor-card PM2.5">
             <span class="sensor-icon">&#8595;</span>
@@ -69,18 +69,18 @@
     <div class="charts-section">
         <div class="chart-card">
             <div class="chart-card-header">
-                <h2>&#x1F321;&nbsp; Temperature</h2>
+                <h2>&#x1F321;&nbsp; Amb Temperature</h2>
             </div>
             <div class="chart-wrapper">
-                <canvas id="tempChart" role="img"></canvas>
+                <canvas id="ambTempChart" role="img"></canvas>
             </div>
         </div>
         <div class="chart-card">
             <div class="chart-card-header">
-                <h2>&#x1F4A7;&nbsp; Humidity</h2>
+                <h2>&#x1F321;&nbsp; Obj Temperature</h2>
             </div>
             <div class="chart-wrapper">
-                <canvas id="humChart" role="img"></canvas>
+                <canvas id="objTempChart" role="img"></canvas>
             </div>
         </div>
         <div class="chart-card">
@@ -103,28 +103,28 @@
     const bleStateEl = document.getElementById('bleState');
     const bleDot = document.getElementById('bleDot');
   
-    const tempValueEl = document.getElementById('tempValue');
-    const humValueEl = document.getElementById('humValue');
+    const ambTempValueEl = document.getElementById('ambTempValue');
+    const objTempValueEl = document.getElementById('objTempValue');
     const Pm25ValueEl = document.getElementById('Pm25Value');
     const Pm10ValueEl = document.getElementById('Pm10Value');
-    const tempTimestamp = document.getElementById('tempTimestamp');
-    const humTimestamp = document.getElementById('humTimestamp');
+    const ambTempTimestamp = document.getElementById('ambTempTimestamp');
+    const objTempTimestamp = document.getElementById('objTempTimestamp');
     const Pm25Timestamp = document.getElementById('Pm25Timestamp');
     const Pm10Timestamp = document.getElementById('Pm10Timestamp');
-    const tempUnitLabel = document.getElementById('tempUnitLabel');
+    const ambTempUnitLabel = document.getElementById('ambTempUnitLabel');
 
     // BLE UUIDs
     var deviceName    = 'ESP32';
     var bleService    = '0000181a-0000-1000-8000-00805f9b34fb';
-    var tempCharUUID  = '00002a6e-0000-1000-8000-00805f9b34fb';
-    var humCharUUID   = '00002a6f-0000-1000-8000-00805f9b34fb';
-    var Pm25CharUUID = '00002a6c-0000-1000-8000-00805f9b34fb';
-    var Pm10CharUUID = '00002a6b-0000-1000-8000-00805f9b34fb';
+    var ambTempCharUUID  = '00002a6e-0000-1000-8000-00805f9b34fb';
+    var objTempCharUUID   = '00002a6e-0000-1000-8000-00805f9b34fb';
+    var Pm25CharUUID = '00002a6e-0000-1000-8000-00805f9b34fb';
+    var Pm10CharUUID = '00002a6e-0000-1000-8000-00805f9b34fb';
 
     // BLE state
     var bleServer;
-    var tempCharFound;
-    var humCharFound;
+    var ambTempCharFound;
+    var objTempCharFound;
     var Pm25CharFound;
     var Pm10CharFound;
     var userDisconnected = false;
@@ -133,8 +133,8 @@
     var currentUnit = 'C';
     var lastTempC = null;
     const MAX_POINTS = 60;
-    var tempData = { labels: [], valuesC: [], valuesF: [] };
-    var humData = { labels: [], values: [] };
+    var ambTempData = { labels: [], valuesC: [], valuesF: [] };
+    var objTempData = { labels: [], values: [] };
     var Pm25Data = { labels: [], values: [] };
     var Pm10Data = { labels: [], values: [] };
   
@@ -176,8 +176,8 @@
         });
     }
 
-    var tempChart = drawChart('tempChart', '#e07b3a', 'Temperature (°C)');
-    var humChart = drawChart('humChart', '#3a90c4', 'Humidity (%)');
+    var ambTempChart = drawChart('ambTempChart', '#e07b3a', 'Temperature (°C)');
+    var objTempChart = drawChart('objTempChart', '#3a90c4', 'Humidity (%)');
     var Pm25Chart = drawChart('Pm25Chart', '#7c5cbf', 'PM2.5 (ug/m3)');
 
     // Temperature unit toggle
@@ -185,7 +185,7 @@
         currentUnit = unit;
         document.getElementById('btnC').classList.toggle('active', unit === 'C');
         document.getElementById('btnF').classList.toggle('active', unit === 'F');
-        tempUnitLabel.innerHTML = '&nbsp;&deg;' + unit;
+        ambTempUnitLabel.innerHTML = '&nbsp;&deg;' + unit;
         refreshTempDisplay();
         refreshTempChart();
     }
@@ -196,17 +196,17 @@
 
     function refreshTempDisplay() {
         if (lastTempC === null) return;
-        tempValueEl.textContent = currentUnit === 'C'
+        ambTempValueEl.textContent = currentUnit === 'C'
             ? parseFloat(lastTempC).toFixed(1)
             : cToF(parseFloat(lastTempC));
     }
 
     function refreshTempChart() {
-        tempChart.data.labels = tempData.labels;
-        tempChart.data.datasets[0].data = currentUnit === 'C' ? tempData.valuesC : tempData.valuesF;
-        tempChart.data.datasets[0].label = currentUnit === 'C' ? 'Temperature (°C)' : 'Temperature (°F)';
-        tempChart.options.scales.y.title.text = currentUnit === 'C' ? 'Temperature (°C)' : 'Temperature (°F)';
-        tempChart.update();
+        ambTempChart.data.labels = ambTempData.labels;
+        ambTempChart.data.datasets[0].data = currentUnit === 'C' ? ambTempData.valuesC : ambTempData.valuesF;
+        ambTempChart.data.datasets[0].label = currentUnit === 'C' ? 'Temperature (°C)' : 'Temperature (°F)';
+        ambTempChart.options.scales.y.title.text = currentUnit === 'C' ? 'Temperature (°C)' : 'Temperature (°F)';
+        ambTempChart.update();
     }
 
     function pushPoint(dataObj, chart, label, value, extraValue = null) {
@@ -283,8 +283,8 @@
 
             const service = await gattServer.getPrimaryService(bleService);
 
-            await subscribeChar(service, tempCharUUID, handleTemp, v => { tempCharFound = v; });
-            await subscribeChar(service, humCharUUID, handleHum, v => { humCharFound = v; });
+            await subscribeChar(service, ambTempCharUUID, handleTemp, v => { ambTempCharFound = v; });
+            await subscribeChar(service, objTempCharUUID, handleHum, v => { objTempCharFound = v; });
             await subscribeChar(service, Pm25CharUUID, handlePm25, v => { Pm25CharFound = v; });
             await subscribeChar(service, Pm10CharUUID, handlePm10, v => { Pm10CharFound = v; });
 
@@ -320,25 +320,25 @@
     }
 
     // Characteristic handlers
-    function handleTemp(event) {
+    function handleambTemp(event) {
         var val = parseFloat(new TextDecoder().decode(event.target.value));
         if (isNaN(val)) return;
         lastTempC = val;
         refreshTempDisplay();
         var ts = getTime();
-        tempTimestamp.textContent = 'Last reading: ' + ts;
+        ambTempTimestamp.textContent = 'Last reading: ' + ts;
         const valC = parseFloat(val.toFixed(1));
         const valF = parseFloat(cToF(val));
-        pushPoint(tempData, tempChart, ts, valC, valF);
+        pushPoint(ambTempData, ambTempChart, ts, valC, valF);
     }
 
-    function handleHum(event) {
+    function handleobjTemp(event) {
         var val = parseFloat(new TextDecoder().decode(event.target.value));
         if (isNaN(val)) return;
-        humValueEl.textContent = val.toFixed(1);
+        objTempValueEl.textContent = val.toFixed(1);
         var ts = getTime();
-        humTimestamp.textContent = 'Last reading: ' + ts;
-        pushPoint(humData, humChart, ts, parseFloat(val.toFixed(1)));
+        objTempTimestamp.textContent = 'Last reading: ' + ts;
+        pushPoint(objTempData, objTempChart, ts, parseFloat(val.toFixed(1)));
     }
 
     function handlePm25(event) {
@@ -356,7 +356,7 @@
         Pm10ValueEl.textContent = val.toFixed(1);
         var ts = getTime();
         Pm10Timestamp.textContent = 'Last reading: ' + ts;
-        // pushPoint(Pm25Data, Pm25Chart, ts, parseFloat(val.toFixed(1)));
+        // pushPoint(Pm10Data, Pm10Chart, ts, parseFloat(val.toFixed(1)));
     }
 
     // Disconnect handlers
@@ -373,8 +373,8 @@
         }
         userDisconnected = true;
         const stops = [];
-        if (tempCharFound) stops.push(tempCharFound.stopNotifications().catch(() => {}));
-        if (humCharFound) stops.push(humCharFound.stopNotifications().catch(() => {}));
+        if (ambTempCharFound) stops.push(ambTempCharFound.stopNotifications().catch(() => {}));
+        if (objTempCharFound) stops.push(objTempCharFound.stopNotifications().catch(() => {}));
         if (Pm25CharFound) stops.push(Pm25CharFound.stopNotifications().catch(() => {}));
         if (Pm10CharFound) stops.push(Pm10CharFound.stopNotifications().catch(() => {}));
       
