@@ -177,7 +177,7 @@
     }
 
     var ambTempChart = drawChart('ambTempChart', '#e07b3a', 'Temperature (°C)');
-    var objTempChart = drawChart('objTempChart', '#e07b3a', 'Humidity (°C)');
+    var objTempChart = drawChart('objTempChart', '#e07b3a', 'Temperature (°C)');
     var Pm25Chart = drawChart('Pm25Chart', '#7c5cbf', 'PM2.5 (ug/m3)');
 
     // Temperature unit toggle
@@ -283,8 +283,8 @@
 
             const service = await gattServer.getPrimaryService(bleService);
 
-            await subscribeChar(service, ambTempCharUUID, handleTemp, v => { ambTempCharFound = v; });
-            await subscribeChar(service, objTempCharUUID, handleHum, v => { objTempCharFound = v; });
+            await subscribeChar(service, ambTempCharUUID, handleambTemp, v => { ambTempCharFound = v; });
+            await subscribeChar(service, objTempCharUUID, handleobjTemp, v => { objTempCharFound = v; });
             await subscribeChar(service, Pm25CharUUID, handlePm25, v => { Pm25CharFound = v; });
             await subscribeChar(service, Pm10CharUUID, handlePm10, v => { Pm10CharFound = v; });
 
