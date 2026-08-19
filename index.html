@@ -286,6 +286,8 @@
             await subscribeChar(service, tempCharUUID, handleTemp, v => { tempCharFound = v; });
             await subscribeChar(service, humCharUUID, handleHum, v => { humCharFound = v; });
             await subscribeChar(service, Pm25CharUUID, handlePm25, v => { Pm25CharFound = v; });
+            await subscribeChar(service, Pm10CharUUID, handlePm10, v => { Pm10CharFound = v; });
+
 
         } catch (err) {
             console.error('Connection error:', err);
@@ -346,6 +348,14 @@
         var ts = getTime();
         Pm25Timestamp.textContent = 'Last reading: ' + ts;
         pushPoint(Pm25Data, Pm25Chart, ts, parseFloat(val.toFixed(1)));
+
+    function handlePm10(event) {
+        var val = parseFloat(new TextDecoder().decode(event.target.value));
+        if (isNaN(val)) return;
+        Pm10ValueEl.textContent = val.toFixed(1);
+        var ts = getTime();
+        Pm10Timestamp.textContent = 'Last reading: ' + ts;
+        // pushPoint(Pm25Data, Pm25Chart, ts, parseFloat(val.toFixed(1)));
     }
 
     // Disconnect handlers
@@ -365,7 +375,8 @@
         if (tempCharFound) stops.push(tempCharFound.stopNotifications().catch(() => {}));
         if (humCharFound) stops.push(humCharFound.stopNotifications().catch(() => {}));
         if (Pm25CharFound) stops.push(Pm25CharFound.stopNotifications().catch(() => {}));
-        
+        if (Pm10CharFound) stops.push(Pm10CharFound.stopNotifications().catch(() => {}));
+      
         Promise.all(stops)
             .then(() => bleServer.disconnect())
             .then(() => setBleDisconnected('Disconnected'))
