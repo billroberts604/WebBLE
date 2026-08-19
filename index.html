@@ -56,6 +56,14 @@
             </div>
             <div class="sensor-timestamp" id="Pm25Timestamp">No reading</div>
         </div>
+            <div class="sensor-card PM10">
+            <span class="sensor-icon">&#8595;</span>
+            <div class="sensor-label">PM10</div>
+            <div class="sensor-value">
+                <span id="Pm10Value">--</span><span class="sensor-unit">&nbsp;ug/m3</span>
+            </div>
+            <div class="sensor-timestamp" id="Pm10Timestamp">No reading</div>
+        </div>
     </div>
     <!-- Charts -->
     <div class="charts-section">
@@ -98,9 +106,11 @@
     const tempValueEl = document.getElementById('tempValue');
     const humValueEl = document.getElementById('humValue');
     const Pm25ValueEl = document.getElementById('Pm25Value');
+    const Pm10ValueEl = document.getElementById('Pm10Value');
     const tempTimestamp = document.getElementById('tempTimestamp');
     const humTimestamp = document.getElementById('humTimestamp');
     const Pm25Timestamp = document.getElementById('Pm25Timestamp');
+    const Pm10Timestamp = document.getElementById('Pm10Timestamp');
     const tempUnitLabel = document.getElementById('tempUnitLabel');
 
     // BLE UUIDs
@@ -116,6 +126,7 @@
     var tempCharFound;
     var humCharFound;
     var Pm25CharFound;
+    var Pm10CharFound;
     var userDisconnected = false;
 
     // Sensor state
