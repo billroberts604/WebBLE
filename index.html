@@ -177,7 +177,7 @@
     }
 
     var ambTempChart = drawChart('ambTempChart', '#e07b3a', 'Temperature (°C)');
-    var objTempChart = drawChart('objTempChart', '#3a90c4', 'Humidity (%)');
+    var objTempChart = drawChart('objTempChart', '#e07b3a', 'Humidity (°C)');
     var Pm25Chart = drawChart('Pm25Chart', '#7c5cbf', 'PM2.5 (ug/m3)');
 
     // Temperature unit toggle
@@ -335,10 +335,13 @@
     function handleobjTemp(event) {
         var val = parseFloat(new TextDecoder().decode(event.target.value));
         if (isNaN(val)) return;
-        objTempValueEl.textContent = val.toFixed(1);
+        lastTempC = val;
+        refreshTempDisplay();
         var ts = getTime();
         objTempTimestamp.textContent = 'Last reading: ' + ts;
-        pushPoint(objTempData, objTempChart, ts, parseFloat(val.toFixed(1)));
+        const valC = parseFloat(val.toFixed(1));
+        const valF = parseFloat(cToF(val));
+        pushPoint(objTempData, objTempChart, ts, valC, valF);
     }
 
     function handlePm25(event) {
